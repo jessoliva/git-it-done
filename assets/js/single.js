@@ -7,6 +7,8 @@ var limitWarningEl = document.querySelector("#limit-warning");
 var getRepoIssues = function(repo) {
 
   // variable that holds url displaying issues for a certain repo from a certain user
+  // ?direction=asc --> sorts in ascending order / oldest to newest
+  // ? after that, you input rule
   var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
 
   // fetch the data

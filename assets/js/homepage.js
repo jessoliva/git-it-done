@@ -1,14 +1,37 @@
-// Did this to check if the api returns what we're looking for
-// var getUserRepos = function() {
-//   // fetch the url 
-//   fetch("https://api.github.com/users/octocat/repos").then(function(response) {
-//     response.json().then(function(data) {
-//       console.log(data);
-//     });
-//   });
-// };
-// getUserRepos();
-// json() method returns another Promise, hence the extra then() method, whose callback function captures the actual data
+// formSubmitHandler()
+// reference form element
+var userFormEl = document.querySelector("#user-form");
+// reference input element
+var nameInputEl = document.querySelector("#username");
+
+// displayRepos()
+// reference the div container that will display repos
+var repoContainerEl = document.querySelector("#repos-container");
+// reference span element to display name of github username
+var repoSearchTerm = document.querySelector("#repo-search-term");
+
+// get user input for username and send it to getUserRepos function to fetch the info for that user
+var formSubmitHandler = function(event) {
+  // It stops the browser from performing the default action the event wants it to do. In the case of submitting a form, it prevents the browser from sending the form's input data to a URL, as we'll handle what happens with the form input data ourselves in JavaScript
+  event.preventDefault();
+  
+  // get value from input element, what the user input
+  // .trim() removes spaces before or after
+  var username = nameInputEl.value.trim();
+
+  // if the username value is true 
+  if (username) {
+    // send the user input to the getUserRepos function, that name will be sent to displayRepos()
+    getUserRepos(username);
+
+    // to clear the input
+    nameInputEl.value = "";
+
+  } else {
+
+    alert("Please enter a GitHub username");
+  }
+};
 
 // we've added a parameter to the getUserRepos() function and inserted the parameter into the GitHub API URL
 var getUserRepos = function(user) {
@@ -37,38 +60,7 @@ var getUserRepos = function(user) {
     alert("Unable to connect to GitHub");
   });
 }
-getUserRepos();
 // When we use fetch() to create a request, the request might go one of two ways: the request may find its destination URL and attempt to get the data in question, which would get returned into the .then() method; or if the request fails, that error will be sent to the .catch() method.
-
-// reference form element
-var userFormEl = document.querySelector("#user-form");
-// reference input element
-var nameInputEl = document.querySelector("#username");
-
-// get user input for username and send it to getUserRepos function to fetch the info for that user
-var formSubmitHandler = function(event) {
-  // It stops the browser from performing the default action the event wants it to do. In the case of submitting a form, it prevents the browser from sending the form's input data to a URL, as we'll handle what happens with the form input data ourselves in JavaScript.
-  event.preventDefault();
-  
-  // get value from input element, what the user input
-  // .trim() removes spaces before or after
-  var username = nameInputEl.value.trim();
-
-  // if the username value is true 
-  if (username) {
-    // send the user input to the getUserRepos function, that name will be sent to displayRepos()
-    getUserRepos(username);
-    // to clear the input
-    nameInputEl.value = "";
-  } else {
-    alert("Please enter a GitHub username");
-  }
-
-};
-
-// when you give it to the form, allows submission with pressing button AND clicking enter
-// when in the form, you submit, run this function
-userFormEl.addEventListener("submit", formSubmitHandler);
 
 // function to display repos
 // receives the repos = data and searchTerm = user = username
@@ -80,11 +72,6 @@ var displayRepos = function(repos, searchTerm) {
     repoContainerEl.textContent = "No repositories found.";
     return;
   }
-
-  // reference the div container that will display repos
-  var repoContainerEl = document.querySelector("#repos-container");
-  // reference span element to display name of github username
-  var repoSearchTerm = document.querySelector("#repo-search-term");
 
   // VITAL: When working with an app that displays data based on user input, we should always be sure to clear out the old content before displaying new content
   // clear old content
@@ -98,12 +85,16 @@ var displayRepos = function(repos, searchTerm) {
     var repoName = repos[i].owner.login + "/" + repos[i].name;
 
     // create a container for each repo
-    var repoEl = document.createElement("div");
+    var repoEl = document.createElement("a");
     repoEl.classList = "list-item flex-row justify-space-between align-center";
+    // link another page to this container
+    repoEl.setAttribute("href", "./single-repo.html?repo=" + repoName);
+    // relative path from index.html
 
     // create a span element to hold repository name repoName
     var titleEl = document.createElement("span");
     titleEl.textContent = repoName;
+    //
     // append to container
     repoEl.appendChild(titleEl);
 
@@ -125,3 +116,7 @@ var displayRepos = function(repos, searchTerm) {
     repoContainerEl.appendChild(repoEl);
   }
 };
+
+// when you give it to the form, allows submission with pressing button AND clicking enter
+// when in the form, you submit, run this function
+userFormEl.addEventListener("submit", formSubmitHandler);
