@@ -1,5 +1,7 @@
 // reference container to display issues
 var issueContainerEl = document.querySelector("#issues-container");
+// reference container to display message if more than 30 issues in repo
+var limitWarningEl = document.querySelector("#limit-warning");
 
 // fetch issues for certain repo
 var getRepoIssues = function(repo) {
@@ -13,11 +15,20 @@ var getRepoIssues = function(repo) {
     // request was successful
     if (response.ok) {
       response.json().then(function(data) {
-        console.log(data);
 
         // data = issues --> sending to that function
         // pass response data to dom function
         displayIssues(data);
+
+        // check if api has paginated issues
+        // checks if there is a link available in the headers
+        // This would return the value of Link, if that header exists.
+        if (response.headers.get("Link")) {
+
+          // send the repo (parameter of this function) to this function
+          displayWarning(repo);
+        }
+
       });
     }
     else {
@@ -72,8 +83,19 @@ var displayIssues = function(issues) {
     // append each issue element to container
     issueContainerEl.appendChild(issueEl);
   }
-
-
-
 };
 
+var displayWarning = function(repo) {
+
+  // add text to warning container
+  limitWarningEl.textContent = "To see more than 30 issues, visit ";
+
+  // create element to display link of repo if there are more than 30 issues
+  var linkEl = document.createElement("a");
+  linkEl.textContent = "See More Issues on GitHub.com";
+  linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
+  linkEl.setAttribute("target", "_blank");
+  //
+  // append to warning container
+  limitWarningEl.appendChild(linkEl);
+};
