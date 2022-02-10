@@ -16,7 +16,8 @@ var getUserRepos = function(user) {
   var apiUrl = "https://api.github.com/users/" + user + "/repos";
 
   // make a request to the url
-  fetch(apiUrl).then(function(response) {
+  fetch(apiUrl)
+  .then(function(response) {
     // ok is a property
     // when the HTTP request status code is something in the 200s, the ok prprty will be true
     if (response.ok) {
@@ -30,9 +31,14 @@ var getUserRepos = function(user) {
     else {
       alert("Error: GitHub User Not Found");
     }
+  }) // api's way of handling network errors
+  .catch(function(error) {
+    // Notice this `.catch()` getting chained onto the end of the `.then()` method
+    alert("Unable to connect to GitHub");
   });
 }
 getUserRepos();
+// When we use fetch() to create a request, the request might go one of two ways: the request may find its destination URL and attempt to get the data in question, which would get returned into the .then() method; or if the request fails, that error will be sent to the .catch() method.
 
 // reference form element
 var userFormEl = document.querySelector("#user-form");
@@ -68,6 +74,12 @@ userFormEl.addEventListener("submit", formSubmitHandler);
 // receives the repos = data and searchTerm = user = username
 // accepts array of repository data
 var displayRepos = function(repos, searchTerm) {
+
+  // check if api returned any repos for that user
+  if (repos.length === 0) {
+    repoContainerEl.textContent = "No repositories found.";
+    return;
+  }
 
   // reference the div container that will display repos
   var repoContainerEl = document.querySelector("#repos-container");
@@ -106,10 +118,10 @@ var displayRepos = function(repos, searchTerm) {
       statusEl.innerHTML = "<i class='fas fa-check-square status-icon icon-success'></i>";
     }
     //
-    // append to container
+    // append to repoContainerEl
     repoEl.appendChild(statusEl);
 
-    // append container to the dom
+    // append repoContainerEl to the dom
     repoContainerEl.appendChild(repoEl);
   }
 };
