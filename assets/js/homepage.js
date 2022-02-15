@@ -10,6 +10,10 @@ var repoContainerEl = document.querySelector("#repos-container");
 // reference span element to display name of github username
 var repoSearchTerm = document.querySelector("#repo-search-term");
 
+// getFeaturedRepos(language);
+var languageButtonsEl = document.querySelector("#language-buttons");
+
+
 // get user input for username and send it to getUserRepos function to fetch the info for that user
 var formSubmitHandler = function(event) {
   // It stops the browser from performing the default action the event wants it to do. In the case of submitting a form, it prevents the browser from sending the form's input data to a URL, as we'll handle what happens with the form input data ourselves in JavaScript
@@ -94,7 +98,6 @@ var getFeaturedRepos = function(language) {
   // });
 };
 
-
 // function to display repos
 // receives the repos = data and searchTerm = user = username
 // accepts array of repository data
@@ -153,3 +156,29 @@ var displayRepos = function(repos, searchTerm) {
 // when you give it to the form, allows submission with pressing button AND clicking enter
 // when in the form, you submit, run this function
 userFormEl.addEventListener("submit", formSubmitHandler);
+
+// function for language buttons
+var buttonClickHandler = function(event) { 
+
+  // when a language button is clicked (event.target) then get the value for data-language attribute
+  // language will be the data-language value of the child button clicked!!
+  var language = event.target.getAttribute("data-language");
+
+  // make sure the value exists bc the other children can be clicked
+  // send that language to the getFeaturedRepos(language);
+  if (language) {
+    // this is an asynchronous function
+    // if it takes a while, the rest of the code can still go!
+    getFeaturedRepos(language);
+  
+    // clear old content for the container that displays the repo
+    repoContainerEl.textContent = "";
+    // Even though this line comes after getFeaturedRepos(), it will always execute first, because getFeaturedRepos() is asynchronous and will take longer to get a response from GitHub's API.
+  }
+};
+
+// when you click on one of the language buttons
+// not adding event listeners to each button 
+// event delegation!! from parent to children
+// Why aren't we creating click listeners for each button? Think back to the concept of event delegation. Imagine that we had 15 language buttons instead of 3. That may add a lot of extra, repeated code. To keep the code DRY, we can delegate click handling on these elements to their parent elements.
+languageButtonsEl.addEventListener("click", buttonClickHandler);
