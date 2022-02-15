@@ -13,7 +13,6 @@ var repoSearchTerm = document.querySelector("#repo-search-term");
 // getFeaturedRepos(language);
 var languageButtonsEl = document.querySelector("#language-buttons");
 
-
 // get user input for username and send it to getUserRepos function to fetch the info for that user
 var formSubmitHandler = function(event) {
   // It stops the browser from performing the default action the event wants it to do. In the case of submitting a form, it prevents the browser from sending the form's input data to a URL, as we'll handle what happens with the form input data ourselves in JavaScript
