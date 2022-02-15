@@ -62,6 +62,39 @@ var getUserRepos = function(user) {
 }
 // When we use fetch() to create a request, the request might go one of two ways: the request may find its destination URL and attempt to get the data in question, which would get returned into the .then() method; or if the request fails, that error will be sent to the .catch() method.
 
+// get featured repos based on language
+var getFeaturedRepos = function(language) {
+
+  // format the github api url to accept a language
+  var apiUrl = "https://api.github.com/search/repositories?q=" + language + "+is:featured&sort=help-wanted-issues";
+
+  fetch(apiUrl)
+  .then(function(response) {
+    if (response.ok) {
+
+      // convert response to json and display the data --> this extracts the json from the response
+      response.json().then(function(data) {
+        // this is the json() method's call back function which ^^
+
+        console.log(data);
+
+        // pass the language as a searchTerm into displyRepos
+        displayRepos(data.items, language);
+        // data.items are the actual repos 
+      });
+    } 
+    // if the ok property is false, do this for error handling
+    else {
+      alert('Error: GitHub User Not Found');
+    }
+  }); // api's way of handling network errors
+  // .catch(function(error) {
+  //   // Notice this `.catch()` getting chained onto the end of the `.then()` method
+  //   alert("Unable to connect to GitHub");
+  // });
+};
+
+
 // function to display repos
 // receives the repos = data and searchTerm = user = username
 // accepts array of repository data
